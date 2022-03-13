@@ -788,4 +788,8 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+### etc ###
+img/
+materials/
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,eclipse,python,jekyll,intellij,intellij+all,pycharm+all,jupyternotebooks,flask,visualstudiocode,gradle,zsh,pycharm,jboss
