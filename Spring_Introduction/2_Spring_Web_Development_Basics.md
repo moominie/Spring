@@ -2,7 +2,7 @@
 
 
 
-## 3. 스프링 웹 개발 기초
+## 2. 스프링 웹 개발 기초
 
 - 정적 컨텐츠 : 웹 브라우저에 html 파일을 그대로 내려주는 방식  
 
@@ -12,11 +12,11 @@
 
 
 
-### 3-1. 정적 컨텐츠
+### 2-1. 정적 컨텐츠
 
 - 스프링 부트의 정적 컨텐츠 기능
 
-  https://docs.spring.io/spring-boot/docs/2.3.1.RELEASE/reference/html/spring-boot-features.html#boot-features-spring-mvc-static-content
+https://docs.spring.io/spring-boot/docs/2.3.1.RELEASE/reference/html/spring-boot-features.html#boot-features-spring-mvc-static-content
 
 
 
@@ -49,7 +49,7 @@ hello-static 관련 컨트롤러가 없기 때문에 그냥 `resources/static/he
 
 
 
-### 3-2. MVC와 템플릿 엔진
+### 2-2. MVC와 템플릿 엔진
 
 
 
@@ -62,7 +62,7 @@ hello-static 관련 컨트롤러가 없기 때문에 그냥 `resources/static/he
 
 ##### Controller
 
-- HelloController
+`HelloController`
 
 ```java
 package hello.hellospring.controller;
@@ -105,7 +105,7 @@ public class HelloController {
 
 웹 브라우저에서 `localhost:8080/hello-mvc`를 요청하면 스프링 부트의 내장 톰캣 서버가 이와 관련한 helloController를 찾음  
 
-매핑된 helloMvc 메소드를 실행하는데 파라미터값(key값=name, value=spring)을 받아서 매개변수로 넣어주고, Model 객체를 이용해서 View에 값을 넘겨줌     
+매핑된 helloMvc() 메소드를 실행하는데 파라미터값(key=name, value=spring)을 받아서 매개변수로 넣어주고, Model 객체를 이용해서 View에 값을 넘겨줌     
 
 viewResolver가 `resources/template/hello-template`을 찾아서 Thymeleaf 템플릿 엔진 처리(HTML 변환) 후 웹 브라우저에 반환함  
 
@@ -113,7 +113,7 @@ viewResolver가 `resources/template/hello-template`을 찾아서 Thymeleaf 템�
 
 - 소스보기 결과
 
-```html
+```HTTP
 <html>
 <body>
 <p>hello spring</p>
@@ -131,15 +131,15 @@ viewResolver가 `resources/template/hello-template`을 찾아서 Thymeleaf 템�
 
 
 
-### 3-3. API
+### 2-3. API
 
 
 
 #### @ResponseBody 문자 반환
 
+##### Controller
 
-
-##### HelloController
+`HelloController`
 
 ```java
 package hello.hellospring.controller;
@@ -163,7 +163,7 @@ public class HelloController {
 
 @ResponseBody를 사용하면 viewResolver를 사용하지 않음  
 
-대신 HTTP의 BODY에 문자 내용을 직접 반환함(주의 : HTML의 body tag 아님)  
+대신 HTTP의 BODY에 문자 내용을 직접 반환함 (주의 : HTML의 body tag 아님)  
 
 
 
@@ -175,7 +175,7 @@ public class HelloController {
 
 - 소스보기 결과
 
-```html
+```http
 hello spring
 ```
 
@@ -185,7 +185,9 @@ hello spring
 
 #### @ResponseBody 객체 반환
 
-##### HelloController
+##### Controller
+
+`HelloController`
 
 ```java
 package hello.hellospring.controller;
@@ -210,11 +212,13 @@ public class HelloController {
     static class Hello {
         private String name;
 
-        public String getName() {
+        // Getter
+      	public String getName() {
             return name;
         }
 
-        public void setName(String name) {
+        // Setter
+      	public void setName(String name) {
             this.name = name;
         }
     }
@@ -238,7 +242,7 @@ ViewResolver 대신 HttpMessageConverter가 동작함
 
 - 소스보기 결과
 
-```html
+```http
 {"name":"spring"}
 ```
 

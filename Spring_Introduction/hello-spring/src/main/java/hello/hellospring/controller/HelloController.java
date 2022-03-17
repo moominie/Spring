@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HelloController {
 
-    @GetMapping("hello") //url 매핑
+    @GetMapping("hello") // url 매핑
     public String hello(Model model) {
         model.addAttribute("data", "hello!!");
-        return "hello"; //화면 리턴
+        return "hello"; // 화면 리턴
     }
 
     @GetMapping("hello-mvc")
@@ -38,10 +38,12 @@ public class HelloController {
     static class Hello {
         private String name;
 
+        // Getter
         public String getName() {
             return name;
         }
 
+        // Setter
         public void setName(String name) {
             this.name = name;
         }
