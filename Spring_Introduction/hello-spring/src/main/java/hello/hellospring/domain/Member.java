@@ -1,8 +1,7 @@
 package hello.hellospring.domain;
 
 public class Member {
-
-    private Long id; // 회원이 입력하는 id가 아니라 식별자임
+    private Long id; // 회원이 입력하는 id가 아니라 시스템이 정해주는 id
     private String name;
 
     // getter와 setter
