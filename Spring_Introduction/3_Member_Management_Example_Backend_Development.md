@@ -198,7 +198,7 @@ class MemoryMemberRepositoryTest {
         Assertions.assertEquals(member, result);
         */
         /* 방식2 org.assertj.core... import하기
-        Assertions.assertThat(member).isEqualTo(result);
+        Assertions.assertThat(result).isEqualTo(member);
          Assertions에 option + Enter 쳐서 static import하기*/
         assertThat(result).isEqualTo(member);
     }
@@ -246,7 +246,205 @@ class MemoryMemberRepositoryTest {
 
 ### 3-4. 회원 서비스 개발
 
+`MemberService`
+
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class MemberService {
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    /**
+     * 회원가입
+     */
+    public Long join(Member member) {
+        validateDuplicateMember(member); // 중복 회원 검증
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    // ctrl + t : 메소드 추출(command + option + m) 등 refactoring 메뉴 단축키
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName()) // command+option+v : 알아서 리턴값 반환 받아주는 단축키
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+
+    /**
+     * 전체 회원 조회
+     */
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
+```
+
+
+
+
+
 
 
 ### 3-5. 회원 서비스 테스트 
+
+- command + shift + t : 클래스에서 test 자동 생성해주는 단축키 
+  - testing library : Junit5
+  - test methods : 3개 다 체크
+
+
+
+- ctrl + r : 이전 실행을 그대로 다시 실행해주는 단축키  
+
+
+
+`MemberService`
+
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
+    /**
+     * 회원가입
+     */
+    public Long join(Member member) {
+        validateDuplicateMember(member); // 중복 회원 검증
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    // ctrl + t : 메소드 추출 등 refactoring 메뉴
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+
+    /**
+     * 전체 회원 조회
+     */
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+}
+```
+
+
+
+`MemberServiceTest`
+
+```java
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MemberServiceTest {
+
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
+
+    // DI
+    @BeforeEach
+    public void beforeEach() {
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        memberRepository.storeClear();
+    }
+
+    @Test
+    void 회원가입() {
+        // given
+        Member member = new Member();
+        member.setName("spring");
+        
+        // when
+        Long saveId = memberService.join(member);
+
+        // then
+        Member findMember = memberService.findOne(saveId).get();
+        assertThat(findMember.getName()).isEqualTo(member.getName());
+    }
+
+    @Test
+    void 중복_회원_예외() {
+        // given
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        // when
+        memberService.join(member1);
+        // 더 좋은 방법
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+
+        /* 첫 번째 방법
+        try {
+            memberService.join(member2);
+            fail();
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        }
+        */
+        // then
+
+    }
+
+    @Test
+    void findMembers() {
+    }
+
+    @Test
+    void findOne() {
+    }
+}
+```
+
+
+
+
 
